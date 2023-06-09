@@ -1,10 +1,8 @@
 package pl.javastart.task;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -53,29 +51,20 @@ public class Main {
         String userInput = scanner.nextLine();
         LocalDateTime dateTime = null;
 
-        int dotUnicode = 46;
         if (userInput.length() == 10) {
             LocalDate date = LocalDate.parse(userInput, DateTimeFormatter.ISO_LOCAL_DATE);
             dateTime = date.atStartOfDay();
-            return dateTime;
         } else {
-            if (userInput.length() > 2) {
-                for (String allFormat : allFormats) {
-                    if (userInput.charAt(2) == (char) dotUnicode && allFormat.charAt(2) == (char) dotUnicode) {
-                        dateTime = getLocalDateTime(allFormat, userInput);
-                        return dateTime;
-                    } else if ((userInput.length() == 19) && (allFormat.length() == 19) && userInput.charAt(2) != (char) dotUnicode) {
-                        dateTime = getLocalDateTime(allFormat, userInput);
-                        return dateTime;
-                    }
+            for (String dateTimeFormat : allFormats) {
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
+                    dateTime = LocalDateTime.parse(userInput, formatter);
+                    return dateTime;
+                } catch (DateTimeParseException ignored) {
+                    //ignored
                 }
             }
         }
         return dateTime;
-    }
-
-    private static LocalDateTime getLocalDateTime(String pattern, String userInput) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-        return LocalDateTime.parse(userInput, formatter);
     }
 }
